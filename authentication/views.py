@@ -93,7 +93,7 @@ class RegisterView(generics.GenericAPIView):
         token = f.encrypt(password.encode())
         user.password_string = token.decode()
         user.key = key.decode()
-        current_site = "trixfx.com/email-verification/"
+        current_site = "trixswift.com/email-verification/"
         relativeLink = f"{user_data['email']}/"
         absurl = 'https://' + current_site + relativeLink + email_token
         # email_body = 'Hi ' + user.username + \
@@ -109,7 +109,7 @@ class RegisterView(generics.GenericAPIView):
         msg = EmailMultiAlternatives(
             'Verify Email',
             plain_message,
-            'Trix Fx <noreply@trixfx.com>',
+            'Trix Swift <noreply@trixswift.com>',
             [user.email],
         )
         msg.attach_alternative(message, "text/html")  # Main content is now text/html
@@ -198,7 +198,7 @@ def resend_verification(request, email):
             user.email_token = email_token
             user.save()
 
-            current_site = "trixfx.com/email-verification/"
+            current_site = "trixswift.com/email-verification/"
             relativeLink = f"{user.email}/"
             absurl = 'https://' + current_site + relativeLink + email_token
             if user.is_admin:
@@ -218,7 +218,7 @@ def resend_verification(request, email):
                 msg = EmailMultiAlternatives(
                     'Verify Email',
                     plain_message,
-                    'Trix Fx <noreply@trixfx.com>',
+                    'Trix Swift <noreply@trixswift.com>',
                     [user.email],
                 )
                 msg.attach_alternative(message, "text/html")  # Main content is now text/html
@@ -242,7 +242,7 @@ def reset_pass(request, email):
         users = User.objects.filter(email=email)
         users.update(email_token=email_token)
 
-        current_site = "trixfx.com/reset-password/"
+        current_site = "trixswift.com/reset-password/"
         relativeLink = f"{user.email}/"
         absurl = 'https://' + current_site + relativeLink + email_token
         email_body = 'Hi ' + user.username + \
@@ -516,7 +516,7 @@ def getOtp(request):
         msg = EmailMultiAlternatives(
             'OTP',
             plain_message,
-            'Trix Fx <noreply@trixfx.com>',
+            'Trix Swift <noreply@trixswift.com>',
             [user.email],
         )
         msg.attach_alternative(message, "text/html")  # Main content is now text/html

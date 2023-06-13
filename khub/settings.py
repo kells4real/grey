@@ -210,10 +210,10 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DEFAULT_FROM_EMAIL = "Trix Fx <noreply@trixfx.com>"
+DEFAULT_FROM_EMAIL = "Trix Swift <noreply@trixswift.com>"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.trixfx.com'
+EMAIL_HOST = 'mail.trixswift.com'
 EMAIL_PORT = 26
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "noreply@trixfx.com"
+EMAIL_HOST_USER = "noreply@trixswift.com"
 EMAIL_HOST_PASSWORD = "NewEmailPassword2022"
