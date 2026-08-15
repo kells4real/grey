@@ -46,7 +46,7 @@ class CryptoAddListView(generics.ListAPIView):
         return CryptoAdd.objects.filter(user=self.request.user).order_by('-date')
 
 
-url = "https://trixfx.com"
+url = "https://capitalorcas.com"
 
 
 class AddWalletViewSet(viewsets.ViewSet):

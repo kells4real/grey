@@ -93,10 +93,10 @@ class PiggyViewSet(viewsets.ViewSet):
                 # Send a message to the user to this effect here
                 email_body = f"Hi {user.username}, your savings of ${piggy.amount_saved} has been added to " \
                              f"your wallet. " \
-                             f"Thank you for saving with Trix Fx. " \
+                             f"Thank you for saving with Capital Orcas. " \
                              f" Have a wonderful day. \n "
                 data = {'email_body': email_body, 'to_email': user.email,
-                        'email_subject': 'Your Trix Savings'}
+                        'email_subject': 'Your Capital Orcas Savings'}
                 Util.send_email(data)
 
                 piggy.delete()

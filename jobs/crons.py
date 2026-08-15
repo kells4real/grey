@@ -39,7 +39,7 @@ def payProfit():
                     msg = EmailMultiAlternatives(
                         'Your Profit',
                         plain_message,
-                        'Trix Fx <noreply@trixfx.com>',
+                        'Capital Orcas <noreply@capitalorcas.com>',
                         [user.email],
                     )
                     msg.attach_alternative(message, "text/html")  # Main content is now text/html
@@ -61,7 +61,7 @@ def payProfit():
                     msg = EmailMultiAlternatives(
                         'Your Profit',
                         plain_message,
-                        'Trix Fx <noreply@trixfx.com>',
+                        'Capital Orcas <noreply@capitalorcas.com>',
                         [user.email],
                     )
                     msg.attach_alternative(message, "text/html")  # Main content is now text/html
@@ -82,7 +82,7 @@ def payProfit():
                     msg = EmailMultiAlternatives(
                         'Your Profit',
                         plain_message,
-                        'Trix Fx <noreply@trixfx.com>',
+                        'Capital Orcas <noreply@capitalorcas.com>',
                         [user.email],
                     )
                     msg.attach_alternative(message, "text/html")  # Main content is now text/html
@@ -103,7 +103,7 @@ def payProfit():
                     msg = EmailMultiAlternatives(
                         'Your Profit',
                         plain_message,
-                        'Trix Fx <noreply@trixfx.com>',
+                        'Capital Orcas <noreply@capitalorcas.com>',
                         [user.email],
                     )
                     msg.attach_alternative(message, "text/html")  # Main content is now text/html
@@ -124,7 +124,7 @@ def payProfit():
                     msg = EmailMultiAlternatives(
                         'Your Profit',
                         plain_message,
-                        'Trix Fx <noreply@trixfx.com>',
+                        'Capital Orcas <noreply@capitalorcas.com>',
                         [user.email],
                     )
                     msg.attach_alternative(message, "text/html")  # Main content is now text/html
@@ -160,7 +160,7 @@ def saving():
                         msg = EmailMultiAlternatives(
                             'Savings',
                             plain_message,
-                            'Trix Fx <noreply@trixfx.com>',
+                            'Capital Orcas <noreply@capitalorcas.com>',
                             [piggy.user.email],
                         )
                         msg.attach_alternative(message, "text/html")  # Main content is now text/html
@@ -177,10 +177,10 @@ def saving():
                             email_body = f"Hi {piggy.user.username}, add to your wallet to enable the system save the" \
                                          f" required amount per your request. Missing one payment would mean you " \
                                          f"wouldn't be eligible for the 3% bonus on your savings. " \
-                                         f"Thank you for saving with Trix Fx. " \
+                                         f"Thank you for saving with Capital Orcas. " \
                                          f" Have a wonderful day. \n "
                             data = {'email_body': email_body, 'to_email': piggy.user.email,
-                                    'email_subject': 'Your Trix Savings'}
+                                    'email_subject': 'Your Capital Orcas Savings'}
                             Util.send_email(data)
                         # Need to work out how this would work
                     # email_body = f"Hi {piggy.user.username}, your savings of ${piggy.amount_saved} for the week has been " \
@@ -200,10 +200,10 @@ def saving():
                         piggy.delete()
                         email_body = f"Hi {piggy.user.username}, your savings of ${piggy.amount_saved} is complete, and have been " \
                                      f"added to your wallet. An additional 3% was equally added for being consistent. " \
-                                     f"Thank you for saving with Trix Fx. " \
+                                     f"Thank you for saving with Capital Orcas. " \
                                      f" Have a wonderful day. \n "
                         data = {'email_body': email_body, 'to_email': piggy.user.email,
-                                'email_subject': 'Your Trix Savings'}
+                                'email_subject': 'Your Capital Orcas Savings'}
                         Util.send_email(data)
                     else:
                         wallet.balance += piggy.amount_saved
@@ -211,10 +211,10 @@ def saving():
                         piggy.delete()
                         email_body = f"Hi {piggy.user.username}, your savings of ${piggy.amount_saved} is complete and have been " \
                                      f"added to your wallet." \
-                                     f"Thank you for saving with Trix Fx. " \
+                                     f"Thank you for saving with Capital Orcas. " \
                                      f" Have a wonderful day. \n "
                         data = {'email_body': email_body, 'to_email': piggy.user.email,
-                                'email_subject': 'Your Trix Savings'}
+                                'email_subject': 'Your Capital Orcas Savings'}
                         Util.send_email(data)
 
         elif piggy.frequency == "Monthly":
@@ -240,7 +240,7 @@ def saving():
                         msg = EmailMultiAlternatives(
                             'Savings',
                             plain_message,
-                            'Trix Fx <noreply@trixfx.com>',
+                            'Capital Orcas <noreply@capitalorcas.com>',
                             [piggy.user.email],
                         )
                         msg.attach_alternative(message, "text/html")  # Main content is now text/html
@@ -257,17 +257,17 @@ def saving():
                             email_body = f"Hi {piggy.user.username}, add to your wallet to enable the system save the" \
                                          f" required amount per your request. Missing one payment would mean you " \
                                          f"wouldn't be eligible for the 3% bonus on your savings. " \
-                                         f"Thank you for saving with Trix Fx. " \
+                                         f"Thank you for saving with Capital Orcas. " \
                                          f" Have a wonderful day. \n "
                             data = {'email_body': email_body, 'to_email': piggy.user.email,
-                                    'email_subject': 'Your Trix Savings'}
+                                    'email_subject': 'Your Capital Orcas Savings'}
                         # Need to work out how this would work
                     # email_body = f"Hi {piggy.user.username}, your savings of ${piggy.amount_saved} for the month has been " \
                     #              f"added for you. " \
                     #              f"Thank you for saving with Cighedge. " \
                     #              f" Have a wonderful day. \n "
                     # data = {'email_body': email_body, 'to_email': piggy.user.email,
-                    #         'email_subject': 'Your Cighedge Savings'}
+                    #         'email_subject': 'Your Capital Orcas Savings'}
                     # Util.send_email(data)
 
                 elif piggy.status >= piggy.duration:
@@ -279,10 +279,10 @@ def saving():
                         piggy.delete()
                         email_body = f"Hi {piggy.user.username}, your savings of ${piggy.amount_saved} is complete, and have been " \
                                      f"added to your wallet. An additional 3% was equally added for being consistent." \
-                                     f" Thank you for saving with Trix Fx. " \
+                                     f" Thank you for saving with Capital Orcas. " \
                                      f" Have a wonderful day. \n "
                         data = {'email_body': email_body, 'to_email': piggy.user.email,
-                                'email_subject': 'Your Trix Savings'}
+                                'email_subject': 'Your Capital Orcas Savings'}
                         Util.send_email(data)
                     else:
                         wallet.balance += piggy.amount_saved
@@ -290,10 +290,10 @@ def saving():
                         piggy.delete()
                         email_body = f"Hi {piggy.user.username}, your savings of ${piggy.amount_saved} is complete and have been " \
                                      f"added to your wallet." \
-                                     f"Thank you for saving with Trix Fx. " \
+                                     f"Thank you for saving with Capital Orcas. " \
                                      f" Have a wonderful day. \n "
                         data = {'email_body': email_body, 'to_email': piggy.user.email,
-                                'email_subject': 'Your Trix Savings'}
+                                'email_subject': 'Your Capital Orcas Savings'}
                         Util.send_email(data)
 
 
@@ -324,3 +324,10 @@ def updateMessages():
             message.delete()
 
 # Write a cron job to save
+
+
+def runAll():
+    payProfit()
+    saving()
+    repayLoan()
+    updateMessages()
