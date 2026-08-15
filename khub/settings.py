@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'piggyvest',
     'rest_framework',
     'corsheaders',
-    'drf_yasg',
+    # 'drf_yasg',
     'notifications',
     'notifications_rest',
     'django_crontab',

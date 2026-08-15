@@ -10,5 +10,5 @@ urlpatterns = [
     path('crypto_requests/', views.CryptoRequest.as_view({"get": "list", "post": "create"})),
     path('crypto_requests/<int:pk>/<str:params>/', views.updateRequest),
     path('user_transfers/', views.getTransfers),
-
+    path('crypto-transactions/', views.CryptoAddListView.as_view(), name='crypto-transactions'),
 ]

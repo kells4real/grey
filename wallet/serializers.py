@@ -3,6 +3,10 @@ from .models import Wallet, WalletTransfer, Withdraw, AddToWallet, CryptoAdd
 from authentication.serializers import UserDetailSerializer
 from authentication.models import User
 
+class CryptoAddSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CryptoAdd
+        fields = ['id', 'amount', 'approved', 'declined', 'date', 'ref', 'type']
 
 class WalletSerializer(serializers.ModelSerializer):
 

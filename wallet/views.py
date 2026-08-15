@@ -15,6 +15,7 @@ from configuration.models import Withdraw as WithdrawConfig
 from pagination.pagination import StandardPagination, AdminPagination
 from django.db.models import Q
 from fcm_django.models import FCMDevice
+from rest_framework.pagination import PageNumberPagination
 from notifications.signals import notify
 from django.utils import timezone
 from .utils import Util
@@ -27,6 +28,22 @@ import string
 from investment.models import percentage
 import math
 locale.setlocale(locale.LC_ALL, 'en_CA.UTF-8')
+
+
+from .serializers import CryptoAddSerializer
+
+class CryptoAddPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+class CryptoAddListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CryptoAddSerializer
+    pagination_class = CryptoAddPagination
+    
+    def get_queryset(self):
+        return CryptoAdd.objects.filter(user=self.request.user).order_by('-date')
 
 
 url = "https://trixfx.com"
