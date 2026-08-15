@@ -327,7 +327,5 @@ def updateMessages():
 
 
 def runAll():
-    payProfit()
-    saving()
     repayLoan()
     updateMessages()

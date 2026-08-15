@@ -45,6 +45,12 @@ INSTALLED_APPS = [
     'fcm_django'
 ]
 
+CRONJOBS = [
+    ('*/15 * * * *', 'jobs.crons.payProfit'),
+    ('*/30 * * * *', 'jobs.crons.saving'),
+    ('*/57 * * * *', 'jobs.crons.runAll'),
+]
+
 FCM_DJANGO_SETTINGS = {
         # authentication to Firebase
         "FCM_SERVER_KEY": "AAAAOHqteEo:APA91bF_bwGq8YRJ_rxV5ro1P72L6RrsVVHaQi1bdqQ6RMcYomKh_8vURVHWQuaBC4vHZhbAYsK9IC3XorTghOWYEZFuZzIKBZwKlDVWzKcp4dNgjK4urjpDzN4h_Pze7IEzJL43AN13",
@@ -210,10 +216,10 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DEFAULT_FROM_EMAIL = "Trix Swift <noreply@trixswift.com>"
+DEFAULT_FROM_EMAIL = "Trix Swift <noreply@capitalorcas.com>"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.trixswift.com'
-EMAIL_PORT = 26
+EMAIL_HOST = 'mail.capialorcas.com'
+EMAIL_PORT = 465
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "noreply@trixswift.com"
+EMAIL_HOST_USER = "noreply@capitalorcas.com"
 EMAIL_HOST_PASSWORD = "NewEmailPassword2022"
