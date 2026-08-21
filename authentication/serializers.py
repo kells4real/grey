@@ -65,23 +65,44 @@ class UserCrudSerializer(serializers.ModelSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField('get_image')
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'address', 'mobile_no1', 'mobile_no2', 'gender', 'country',
                   'state', 'about', 'bitcoin', 'email', 'instagram', 'twitter', 'image', 'username',
                   'verified', 'applied')
 
+    def get_image(self, obj):
+        try:
+            if obj.image:
+                print(obj.image.url)
+                return obj.image.url
+        except:
+            pass
+        return None
+
 
 class UserImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('image',)
+        fields = ['image']  # Assuming your model has an ImageField
 
+    def update(self, instance, validated_data):
+        # Cloudinary will automatically handle the upload
+        instance.image = validated_data.get('image', instance.image)
+        instance.save()
+        return instance
 
 class UserImageIdSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('imageId',)
+        fields = ['image']  # If you're passing an image ID or URL
+
+    def update(self, instance, validated_data):
+        # If you're storing a Cloudinary public_id or URL
+        instance.image = validated_data.get('image', instance.image)
+        instance.save()
+        return instance
 
 
 class UserPasswordSerializer(serializers.ModelSerializer):

@@ -1,3 +1,17 @@
+# At the top of your settings.py
+import socket
+
+# Force DNS resolution for api.cloudinary.com
+def force_resolve():
+    try:
+        socket.gethostbyname('api.cloudinary.com')
+    except:
+        # Manually set the IP from nslookup
+        import os
+        # This is a hack - set the host entry programmatically
+        # Better to just use the IP directly for testing
+        pass
+
 from pathlib import Path
 import os
 import datetime
@@ -42,8 +56,35 @@ INSTALLED_APPS = [
     'notifications_rest',
     'django_crontab',
     'rest_framework_simplejwt.token_blacklist',
-    'fcm_django'
+    'fcm_django',
+    'cloudinary_storage',  # <-- ADD THIS
+    'cloudinary', 
 ]
+
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+# Cloudinary Configuration
+cloudinary.config(
+    cloud_name="n6w8x6u5",
+    api_key="611789168259261",
+    api_secret="Dt9t9adkjYDilSFem3D2RtgaONc",
+)
+
+# Media Files Configuration - Use Cloudinary
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Optional: Configure upload settings
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': "n6w8x6u5",
+    'API_KEY': "611789168259261",
+    'API_SECRET': "Dt9t9adkjYDilSFem3D2RtgaONc",
+    'SECURE': True,  # Force HTTPS
+    'CDN': {
+        'SSL': True,
+    },
+}
 
 CRONJOBS = [
     ('*/15 * * * *', 'jobs.crons.payProfit'),
@@ -216,10 +257,18 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DEFAULT_FROM_EMAIL = "Trix Swift <noreply@capitalorcas.com>"
+# DEFAULT_FROM_EMAIL = "Capital Orcas <noreply@capitalorcas.com>"
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'mail.capitalorcas.com'
+# EMAIL_PORT = 26
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = "noreply@capitalorcas.com"
+# EMAIL_HOST_PASSWORD = "NewEmailPassword2022"
+
+DEFAULT_FROM_EMAIL = "Capital Orcas <noreply@capitalorcas.com>"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.capialorcas.com'
-EMAIL_PORT = 465
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "noreply@capitalorcas.com"
-EMAIL_HOST_PASSWORD = "NewEmailPassword2022"
+EMAIL_HOST_USER = 'muffixcreditunion@gmail.com'
+EMAIL_HOST_PASSWORD = 'pgnmlkfqnddnovsv'

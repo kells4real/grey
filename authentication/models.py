@@ -1,5 +1,4 @@
 import datetime
-
 from django.db import models
 from PIL import Image
 from django.utils.text import slugify
@@ -10,16 +9,17 @@ from django.db import models
 from rest_framework_simplejwt.tokens import RefreshToken
 from io import BytesIO
 from django.core.files import File
-# from django.core.files.storage import default_storage as storage
-# import io
-# from io import BytesIO
-# from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils import timezone
 from django.core.files.base import ContentFile
 import os
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import random
 from django.core.validators import MaxValueValidator, MinValueValidator
+import cloudinary
+import cloudinary.uploader
+from cloudinary.exceptions import Error as CloudinaryError
+import requests
+from django.core.files.base import ContentFile
 
 
 def getCode():
@@ -34,37 +34,55 @@ def getCode():
 def make_thumbnail(dst_image_field, src_image_field, size, name_suffix, sep='_'):
     """
     make thumbnail image and field from source image field
-
-    @example
-        thumbnail(self.thumbnail, self.image, (200, 200), 'thumb')
+    
+    UPDATED: Works with Cloudinary by downloading the image first
     """
-    # create thumbnail image
-    image = Image.open(src_image_field)
-    image.thumbnail(size, Image.ANTIALIAS)
-
-    # build file name for dst
-    dst_path, dst_ext = os.path.splitext(os.path.basename(src_image_field.name))
-    dst_ext = dst_ext.lower()
-    dst_fname = '{}{}'.format(dst_path, dst_ext)
-
-    # check extension
-    if dst_ext in ['.jpg', '.jpeg']:
-        filetype = 'JPEG'
-    elif dst_ext == '.gif':
-        filetype = 'GIF'
-    elif dst_ext == '.png':
-        filetype = 'PNG'
-    else:
-        raise RuntimeError('unrecognized file type of "%s"' % dst_ext)
-
-    # Save thumbnail to in-memory file as StringIO
-    dst_bytes = BytesIO()
-    image.save(dst_bytes, filetype)
-    dst_bytes.seek(0)
-
-    # set save=False, otherwise it will run in an infinite loop
-    dst_image_field.save(dst_fname, ContentFile(dst_bytes.read()), save=False)
-    dst_bytes.close()
+    # Check if source image exists
+    if not src_image_field:
+        return
+    
+    try:
+        # For Cloudinary, we need to download the image first
+        if hasattr(src_image_field, 'url') and src_image_field.url:
+            # Download image from Cloudinary
+            response = requests.get(src_image_field.url)
+            image = Image.open(BytesIO(response.content))
+        else:
+            # Fallback to local path if available
+            try:
+                image = Image.open(src_image_field.path)
+            except NotImplementedError:
+                # Cloudinary doesn't support path
+                return
+        
+        image.thumbnail(size, Image.LANCZOS)  # Changed from ANTIALIAS (deprecated)
+        
+        # Build file name for dst
+        dst_path, dst_ext = os.path.splitext(os.path.basename(src_image_field.name))
+        dst_ext = dst_ext.lower()
+        dst_fname = '{}{}{}'.format(dst_path, sep, name_suffix + dst_ext)
+        
+        # Check extension
+        if dst_ext in ['.jpg', '.jpeg']:
+            filetype = 'JPEG'
+        elif dst_ext == '.gif':
+            filetype = 'GIF'
+        elif dst_ext == '.png':
+            filetype = 'PNG'
+        else:
+            filetype = 'JPEG'  # Default fallback
+        
+        # Save thumbnail to in-memory file
+        dst_bytes = BytesIO()
+        image.save(dst_bytes, filetype, quality=85)
+        dst_bytes.seek(0)
+        
+        # Save to destination field
+        dst_image_field.save(dst_fname, ContentFile(dst_bytes.read()), save=False)
+        dst_bytes.close()
+        
+    except Exception as e:
+        print(f"Thumbnail generation error: {e}")
 
 
 class UserManager(BaseUserManager):
@@ -196,7 +214,33 @@ class User(AbstractBaseUser, PermissionsMixin):
             num += 1
         return str(unique_code)
 
-    # Custom save function
+    def _process_image(self, image_field, output_size=(150, 150)):
+        """
+        Helper method to process images with Cloudinary support
+        """
+        if not image_field:
+            return None
+            
+        try:
+            # Try to get the image from Cloudinary
+            if hasattr(image_field, 'url') and image_field.url:
+                # For Cloudinary, use transformations instead of local processing
+                # Return the URL with transformations
+                public_id = getattr(image_field, 'public_id', None)
+                if public_id:
+                    transformed_url = cloudinary.CloudinaryImage(public_id).build_url(
+                        width=output_size[0],
+                        height=output_size[1],
+                        crop='fill',
+                        quality='auto'
+                    )
+                    return transformed_url
+            return None
+        except Exception as e:
+            print(f"Image processing error: {e}")
+            return None
+
+    # Custom save function - UPDATED for Cloudinary
     def save(self, *args, **kwargs):
         if not self.username:
             self.username = self._get_unique_username()
@@ -204,6 +248,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         if not self.referenceCode:
             self.referenceCode = self._get_unique_refCode()
 
+        # Set default images if no image is set
         if not self.image and not self.id:
             if self.gender == "Female":
                 self.image = "girl.jpeg"
@@ -212,15 +257,46 @@ class User(AbstractBaseUser, PermissionsMixin):
                 self.image = 'boy.jpg'
                 self.thumbnail = 'boy.jpg'
 
-            # make_thumbnail(self.image, self.image, (500, 750), 'thumb')
-            # make_thumbnail(self.thumbnail, self.image, (100, 100), 'icon')
-        super(User, self).save()
+        # Call super save first
+        super(User, self).save(*args, **kwargs)
 
-        img = Image.open(self.image.path)
+        # Process image using Cloudinary transformations
+        # Skip local processing since we're using Cloudinary
+        try:
+            if self.image and hasattr(self.image, 'url'):
+                # Use Cloudinary's built-in transformations
+                # This doesn't require local file access
+                pass
+        except Exception as e:
+            print(f"Image processing error: {e}")
 
-        output_size = (150, 150)
-        img.thumbnail(output_size)
-        img.save(self.image.path)
+    def get_optimized_image(self, width=150, height=150):
+        """
+        Get optimized image URL using Cloudinary transformations
+        """
+        if not self.image:
+            return None
+            
+        try:
+            if hasattr(self.image, 'public_id') and self.image.public_id:
+                return cloudinary.CloudinaryImage(self.image.public_id).build_url(
+                    width=width,
+                    height=height,
+                    crop='fill',
+                    quality='auto'
+                )
+            elif hasattr(self.image, 'url'):
+                # If we can't get public_id, just return the URL
+                return self.image.url
+        except Exception as e:
+            print(f"Error getting optimized image: {e}")
+            return self.image.url if hasattr(self.image, 'url') else None
+
+    def get_thumbnail_url(self):
+        """
+        Get thumbnail version of the image
+        """
+        return self.get_optimized_image(100, 100)
 
 
 class Chat(models.Model):

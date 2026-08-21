@@ -298,10 +298,10 @@ def update_user_image(request):
         serializer = UserImageSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
+            # Cloudinary will return the URL
             return Response({"image": user.image.url}, status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'data': 'User not an author'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -315,10 +315,13 @@ def update_user_image_id(request):
         serializer = UserImageIdSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response("success", status=status.HTTP_200_OK)
+            # Return the Cloudinary URL
+            return Response({
+                "message": "success",
+                "image_url": user.image.url if user.image else None
+            }, status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'data': 'User not an author'}, status=status.HTTP_400_BAD_REQUEST)
 
